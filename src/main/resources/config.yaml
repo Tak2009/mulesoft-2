@@ -1,4 +1,5 @@
 #https://rapidapi.com/Sridurgayadav/api/chart-lyrics
+#http://api.chartlyrics.com/apiv1.asmx
 
 lyrics:
   wsdl: "http://api.chartlyrics.com/apiv1.asmx?WSDL"
@@ -11,3 +12,8 @@ delta:
  port: "TicketServicePort"
  
 # https://www.learnwebservices.com/
+
+hello:
+ wsdl: "https://www.learnwebservices.com/services/hello?WSDL"
+ service: "HelloEndpointService"
+ port: "HelloEndpointPort"

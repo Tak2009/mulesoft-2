@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<flow name="get-lyricsFlow" doc:id="b0e6caa3-8cf9-4694-8d4d-ca8691350834" >
+	<flow name="get-song-lyricFlow" doc:id="b0e6caa3-8cf9-4694-8d4d-ca8691350834" >
 		<http:listener doc:name="GET /lyrics" doc:id="6e447dd7-25ec-4a0e-b28b-da60491fb489" path="/lyrics" config-ref="HTTP_Listener_config" allowedMethods="GET"/>
 		<set-variable value="#[attributes.queryParams.lyricId default 1710]" doc:name="lyric ID" doc:id="7479a8c1-18cc-4bd8-a811-c63bd7baee40" variableName="lyricId"/>
 		<set-variable value='#[attributes.queryParams.LyricChecksum default "da3b5396bc959d02a3808e2a75a6b720"]' doc:name="LyricChecksum" doc:id="cead68b8-486a-42c6-8d33-99e020b40e6d" variableName="LyricChecksum"/>
@@ -52,6 +52,34 @@ ns ns0 http://soap.training.mulesoft.com/
 		</ee:transform>
 		<wsc:consume doc:name="Consume" doc:id="5c134d1f-2990-4f4f-804a-8112b2c637f7" config-ref="Web_Service_Consumer_Config_Delta" operation="findFlight"/>
 		<ee:transform doc:name="Transform Message" doc:id="84a629ba-5cbb-40f9-94f6-c7204ffe5aec" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="say-helloFlow" doc:id="c30656fc-033e-48b5-8ca0-94e0768516a5" >
+		<http:listener doc:name="Listener" doc:id="cb660e6f-0fdc-42e2-af0b-cc20b0ddce52" config-ref="HTTP_Listener_config" path="/hello"/>
+		<set-variable value="#[attributes.queryParams.name]" doc:name="Set Variable" doc:id="4681301f-65d4-4108-986c-542c76fc0311" variableName="name"/>
+		<ee:transform doc:name="Transform Message" doc:id="eabb353a-2ab3-47d6-8eca-ba64ef1c9085" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://learnwebservices.com/services/hello
+---
+{
+	ns0#SayHello: {
+		ns0#HelloRequest: {
+			ns0#Name: vars.name
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="7527124f-b36b-4689-a51d-ae36e91cd08b" config-ref="Web_Service_Consumer_Config_Hello" operation="SayHello"/>
+		<ee:transform doc:name="Transform Message" doc:id="2e886b2a-6774-4e82-9d83-71cd9a6627fe" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
