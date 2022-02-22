@@ -63,7 +63,7 @@ payload]]></ee:set-payload>
 	<flow name="say-helloFlow" doc:id="c30656fc-033e-48b5-8ca0-94e0768516a5" >
 		<http:listener doc:name="Listener" doc:id="cb660e6f-0fdc-42e2-af0b-cc20b0ddce52" config-ref="HTTP_Listener_config" path="/hello"/>
 		<set-variable value="#[attributes.queryParams.name]" doc:name="Set Variable" doc:id="4681301f-65d4-4108-986c-542c76fc0311" variableName="name"/>
-		<ee:transform doc:name="Transform Message" doc:id="eabb353a-2ab3-47d6-8eca-ba64ef1c9085" >
+		<ee:transform doc:name="Transform Message" doc:id="6890b2ab-3c7f-456d-9f14-19b95260077e" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/xml
@@ -72,7 +72,7 @@ ns ns0 http://learnwebservices.com/services/hello
 {
 	ns0#SayHello: {
 		ns0#HelloRequest: {
-			ns0#Name: vars.name
+			ns0#Name: vars.name as String
 		}
 	}
 }]]></ee:set-payload>
