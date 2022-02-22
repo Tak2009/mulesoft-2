@@ -1,0 +1,13 @@
+#https://rapidapi.com/Sridurgayadav/api/chart-lyrics
+
+lyrics:
+  wsdl: "http://api.chartlyrics.com/apiv1.asmx?WSDL"
+  service: "apiv1"
+  port: "apiv1Soap" 
+  
+delta:
+ wsdl: "http://mu.learn.mulesoft.com/delta?wsdl"
+ service: "TicketServiceService"
+ port: "TicketServicePort"
+ 
+# https://www.learnwebservices.com/

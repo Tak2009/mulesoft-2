@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-lyricsFlow" doc:id="b0e6caa3-8cf9-4694-8d4d-ca8691350834" >
+		<http:listener doc:name="GET /lyrics" doc:id="6e447dd7-25ec-4a0e-b28b-da60491fb489" path="/lyrics" config-ref="HTTP_Listener_config" allowedMethods="GET"/>
+		<set-variable value="#[attributes.queryParams.lyricId default 1710]" doc:name="lyric ID" doc:id="7479a8c1-18cc-4bd8-a811-c63bd7baee40" variableName="lyricId"/>
+		<set-variable value='#[attributes.queryParams.LyricChecksum default "da3b5396bc959d02a3808e2a75a6b720"]' doc:name="LyricChecksum" doc:id="cead68b8-486a-42c6-8d33-99e020b40e6d" variableName="LyricChecksum"/>
+		<ee:transform doc:name="Transform Message" doc:id="0ccf87e6-bd76-44aa-bdde-8a2f1d3a73ff" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://api.chartlyrics.com/
+---
+{
+	ns0#GetLyric: {
+		ns0#lyricId: vars.lyricId as Number,
+		ns0#lyricCheckSum: vars.LyricChecksum
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="449a5447-636c-460e-ad3a-36da2628870a" config-ref="Web_Service_Consumer_Config" operation="GetLyric"/>
+		<ee:transform doc:name="Transform Message" doc:id="bdeca3af-3f52-4873-a5a4-fee2d67e6da8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="find-delta-flightFlow" doc:id="a5504221-fe09-492e-a611-a28690665da9" >
+		<http:listener doc:name="GET /flight" doc:id="5dfdcf36-439c-4c29-90a7-c383b4bc6545" config-ref="HTTP_Listener_config" path="/delta"/>
+		<set-variable value="#[attributes.queryParams.destination default 'SFO']" doc:name="code" doc:id="3baa087e-6b84-455f-9f50-108b0b2dcd2b" variableName="code"/>
+		<ee:transform doc:name="Transform Message" doc:id="f016e532-a48e-4757-9f1d-8f2a61c9a093" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://soap.training.mulesoft.com/
+---
+{
+	ns0#findFlight: {
+		destination: vars.code
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="5c134d1f-2990-4f4f-804a-8112b2c637f7" config-ref="Web_Service_Consumer_Config_Delta" operation="findFlight"/>
+		<ee:transform doc:name="Transform Message" doc:id="84a629ba-5cbb-40f9-94f6-c7204ffe5aec" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
