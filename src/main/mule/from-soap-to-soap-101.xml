@@ -61,7 +61,7 @@ payload]]></ee:set-payload>
 		</ee:transform>
 	</flow>
 	<flow name="say-helloFlow" doc:id="c30656fc-033e-48b5-8ca0-94e0768516a5" >
-		<http:listener doc:name="Listener" doc:id="cb660e6f-0fdc-42e2-af0b-cc20b0ddce52" config-ref="HTTP_Listener_config" path="/hello"/>
+		<http:listener doc:name="Listener" doc:id="cb660e6f-0fdc-42e2-af0b-cc20b0ddce52" config-ref="HTTP_Listener_config" path="/hello" doc:description="This is POST only" allowedMethods="POST"/>
 		<set-variable value="#[attributes.queryParams.name]" doc:name="Set Variable" doc:id="4681301f-65d4-4108-986c-542c76fc0311" variableName="name"/>
 		<ee:transform doc:name="Transform Message" doc:id="6890b2ab-3c7f-456d-9f14-19b95260077e" >
 			<ee:message >
@@ -90,15 +90,30 @@ payload]]></ee:set-payload>
 	</flow>
 	<flow name="sfdc-soapFlow" doc:id="6dce5459-ad97-456c-8271-e53bc8f3f168" >
 		<http:listener doc:name="Listener" doc:id="14e0f1ed-4113-4b42-96bd-d4ae6d53dfd8" config-ref="HTTP_Listener_config" path="/sfdcsoap" allowedMethods="GET"/>
+		<set-variable value='#[attributes.queryParams.fieldList default "Phone"]' doc:name="Set Variable" doc:id="6badb34f-3b66-4ad0-80d1-d3debc1ec3d4" variableName="fieldList"/>
 		<ee:transform doc:name="Transform Message" doc:id="6f92bef8-3658-4e31-bfeb-53ce8f175f03" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/xml
+ns ns0 urn:enterprise.soap.sforce.com
 ---
 {
+	ns0#retrieve: {
+		ns0#fieldList: vars.fieldList as String,
+		ns0#sObjectType: "Account",
+		ns0#ids: 1
+	}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<wsc:consume doc:name="Consume" doc:id="7f7d96e4-bffd-4fbc-8021-cfc7cb31249c" config-ref="Web_Service_Consumer_Config_SfdcSoap" operation="query"/>
+		<wsc:consume doc:name="Consume" doc:id="7f7d96e4-bffd-4fbc-8021-cfc7cb31249c" config-ref="Web_Service_Consumer_Config_SfdcSoap" operation="retrieve"/>
+		<ee:transform doc:name="Transform Message" doc:id="b602e053-408d-43c8-9ee6-5e1401e8dd27" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</flow>
 </mule>

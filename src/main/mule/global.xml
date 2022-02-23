@@ -19,6 +19,6 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 		<wsc:connection wsdlLocation="${hello.wsdl}" service="${hello.service}" port="${hello.port}" />
 	</wsc:config>
 	<wsc:config name="Web_Service_Consumer_Config_SfdcSoap" doc:name="Web Service Consumer Config" doc:id="e67b7b13-b00e-4d50-af0a-7596260020c9" >
-		<wsc:connection wsdlLocation="${sfdcsoap.wsdl}" service="${sfdcsoap.service}" port="${sfdcsoap.port}" />
+		<wsc:connection wsdlLocation="${sfdcsoap.wsdl}" service="${sfdcsoap.service}" port="${sfdcsoap.port}"/>
 	</wsc:config>
 </mule>
