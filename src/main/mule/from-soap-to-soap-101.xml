@@ -88,4 +88,17 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="sfdc-soapFlow" doc:id="6dce5459-ad97-456c-8271-e53bc8f3f168" >
+		<http:listener doc:name="Listener" doc:id="14e0f1ed-4113-4b42-96bd-d4ae6d53dfd8" config-ref="HTTP_Listener_config" path="/sfdcsoap" allowedMethods="GET"/>
+		<ee:transform doc:name="Transform Message" doc:id="6f92bef8-3658-4e31-bfeb-53ce8f175f03" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="7f7d96e4-bffd-4fbc-8021-cfc7cb31249c" config-ref="Web_Service_Consumer_Config_SfdcSoap" operation="query"/>
+	</flow>
 </mule>
